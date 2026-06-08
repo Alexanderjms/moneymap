@@ -30,12 +30,17 @@ export default function ConfirmModal({ onConfirm }: Props) {
     const modal = modalRef.current;
     const overlay = overlayRef.current;
     if (!modal || !overlay) return;
+    if (overlay.dataset.closing === "true") return;
+    overlay.dataset.closing = "true";
     modal.classList.remove("scale-100", "opacity-100");
     modal.classList.add("scale-95", "opacity-0");
-    setTimeout(function () {
+    function done() {
+      if (!modal || !overlay) return;
+      delete overlay.dataset.closing;
       overlay.classList.add("hidden");
       overlay.classList.remove("flex");
-    }, 200);
+    }
+    modal.addEventListener("transitionend", done, { once: true });
   }
 
   function handleConfirm() {
@@ -49,15 +54,17 @@ export default function ConfirmModal({ onConfirm }: Props) {
     }
     document.addEventListener("keydown", handleKey);
 
-    document.querySelectorAll("[data-delete-id]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        const el = btn as HTMLElement;
-        openModal(el.dataset.deleteName || "", el.dataset.deleteId || "");
-      });
-    });
+    function handleClick(e: MouseEvent) {
+      const btn = (e.target as HTMLElement).closest("[data-delete-id]") as HTMLElement | null;
+      if (btn) {
+        openModal(btn.dataset.deleteName || "", btn.dataset.deleteId || "");
+      }
+    }
+    document.addEventListener("click", handleClick);
 
     return function () {
       document.removeEventListener("keydown", handleKey);
+      document.removeEventListener("click", handleClick);
     };
   }, []);
 

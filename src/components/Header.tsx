@@ -67,6 +67,10 @@ export default function Header() {
             <Icon icon="mdi:trending-down" className="h-5 w-5" />
             <span>Gastos</span>
           </Link>
+          <Link href="/personal/plan-compras" className={linkClass}>
+            <Icon icon="mdi:cart-outline" className="h-5 w-5" />
+            <span>Plan de compras</span>
+          </Link>
           <form method="POST" action="/api/logout">
             <button
               type="submit"
@@ -118,6 +122,14 @@ export default function Header() {
             >
               <Icon icon="mdi:trending-down" className="h-5 w-5" />
               Gastos
+            </Link>
+            <Link
+              href="/personal/plan-compras"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
+            >
+              <Icon icon="mdi:cart-outline" className="h-5 w-5" />
+              Plan de compras
             </Link>
             <form method="POST" action="/api/logout" className="mt-1">
               <button

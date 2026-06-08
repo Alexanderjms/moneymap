@@ -60,7 +60,7 @@ function formatDisplay(dateStr: string): string {
 interface Props {
   name: string;
   value?: string;
-  accent?: "emerald" | "red";
+  accent?: "emerald" | "red" | "violet";
   onChange?: (value: string) => void;
 }
 
@@ -121,7 +121,9 @@ export default function DatePicker({
   const accentBorder =
     accent === "emerald"
       ? "focus:border-emerald-500 focus:ring-emerald-500"
-      : "focus:border-red-500 focus:ring-red-500";
+      : accent === "violet"
+        ? "focus:border-violet-500 focus:ring-violet-500"
+        : "focus:border-red-500 focus:ring-red-500";
 
   return (
     <div
@@ -129,7 +131,9 @@ export default function DatePicker({
       data-component="datepicker"
       className="relative"
       style={
-        { "--accent": accent === "emerald" ? "#10b981" : "#ef4444" } as React.CSSProperties
+        {
+          "--accent": accent === "emerald" ? "#10b981" : accent === "violet" ? "#8b5cf6" : "#ef4444",
+        } as React.CSSProperties
       }
     >
       <input type="hidden" name={name} value={selectedDate} readOnly />
