@@ -11,7 +11,12 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "MoneyMap",
   description: "Control de finanzas personales",
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: "/favicon.svg", apple: "/logo-header.svg" },
+  manifest: "/manifest.json",
+};
+
+export const viewport = {
+  themeColor: "#0a0a0a",
 };
 
 export default function RootLayout({
