@@ -178,52 +178,98 @@ export default function GastosClient() {
         {isLoading ? (
           <p className="py-12 text-center text-neutral-500">Cargando...</p>
         ) : gastos.length > 0 ? (
-          <div className="overflow-hidden rounded-md border border-neutral-800">
-            <table className="w-full text-sm">
-              <thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <tr
-                    key={headerGroup.id}
-                    className="border-b border-neutral-800 bg-neutral-900/50"
-                  >
-                    {headerGroup.headers.map((header) => (
-                      <th
-                        key={header.id}
-                        className="cursor-pointer px-4 py-3 text-left font-medium text-neutral-400 select-none"
-                        onClick={header.column.getToggleSortingHandler()}
-                      >
-                        {flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                        {{
-                          asc: " ▲",
-                          desc: " ▼",
-                        }[header.column.getIsSorted() as string] ?? null}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody>
-                {table.getRowModel().rows.map((row) => (
-                  <tr
+          <>
+            <div className="max-sm:hidden overflow-x-auto rounded-md border border-neutral-800">
+              <table className="w-full min-w-[500px] text-sm">
+                <thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <tr
+                      key={headerGroup.id}
+                      className="border-b border-neutral-800 bg-neutral-900/50"
+                    >
+                      {headerGroup.headers.map((header) => (
+                        <th
+                          key={header.id}
+                          className="cursor-pointer px-4 py-3 text-left font-medium text-neutral-400 select-none"
+                          onClick={header.column.getToggleSortingHandler()}
+                        >
+                          {flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                          {{
+                            asc: " ▲",
+                            desc: " ▼",
+                          }[header.column.getIsSorted() as string] ?? null}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody>
+                  {table.getRowModel().rows.map((row) => (
+                    <tr
+                      key={row.id}
+                      className="border-b border-neutral-800/50 last:border-0"
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <td key={cell.id} className="px-4 py-3">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="sm:hidden space-y-3">
+              {table.getRowModel().rows.map((row) => {
+                const gas = row.original;
+                const amountStr =
+                  (gas.currency === "USD" ? "$" : "L.") +
+                  " " +
+                  Number(gas.amount).toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  });
+                return (
+                  <div
                     key={row.id}
-                    className="border-b border-neutral-800/50 last:border-0"
+                    className="rounded-xl border border-neutral-800/60 bg-neutral-900/30 p-4"
                   >
-                    {row.getVisibleCells().map((cell) => (
-                      <td key={cell.id} className="px-4 py-3">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    <div className="mb-2 flex items-start justify-between">
+                      <span className="text-sm font-medium text-white">{gas.name}</span>
+                      <div className="flex items-center gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => openEdit(gas)}
+                          className="cursor-pointer rounded-lg p-1.5 text-neutral-500 transition-colors hover:bg-neutral-800 hover:text-white"
+                        >
+                          <Icon icon="mdi:pencil" className="text-lg" />
+                        </button>
+                        <button
+                          type="button"
+                          data-delete-id={gas.id}
+                          data-delete-name={gas.name}
+                          className="cursor-pointer rounded-lg p-1.5 text-neutral-500 transition-colors hover:bg-neutral-800 hover:text-red-400"
+                        >
+                          <Icon icon="mdi:delete" className="text-lg" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-red-400 font-medium">{amountStr}</span>
+                      <span className="text-xs text-neutral-400">{formatDate(gas.date)}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </>
         ) : (
           <p className="py-12 text-center text-neutral-500">
             No tenés gastos registrados todavía.
@@ -245,10 +291,10 @@ export default function GastosClient() {
       <div
         ref={drawerRef}
         id="gasto-drawer"
-        className="fixed inset-y-0 right-0 z-50 flex w-1/2 flex-col border-l border-neutral-800 bg-neutral-950 shadow-2xl will-change-transform"
+        className="fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-neutral-800 bg-neutral-950 shadow-2xl will-change-transform sm:w-1/2"
         style={{ transform: "translateX(100%)" }}
       >
-        <div className="flex items-center justify-between border-b border-neutral-800 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-4 sm:px-6">
           <h2 id="drawer-title" className="text-lg font-semibold">
             {editId ? "Editar gasto" : "Nuevo gasto"}
           </h2>
@@ -264,7 +310,7 @@ export default function GastosClient() {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
           {upsertGasto.isError && (
             <div className="mb-4 rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-400">
               {upsertGasto.error?.message || "Error al guardar"}

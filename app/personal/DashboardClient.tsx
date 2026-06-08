@@ -1,7 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { useMemo, useEffect, useState } from "react";
+import { useMemo } from "react";
 import {
   useIngresos,
   useGastos,
@@ -18,9 +18,6 @@ function convertToHnl(amount: number, currency: string, rate: number) {
 }
 
 export default function DashboardClient() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-
   const { data: ingresos = [] } = useIngresos();
   const { data: gastos = [] } = useGastos();
   const { data: rateInfo } = useCurrentRate();
@@ -65,25 +62,6 @@ export default function DashboardClient() {
     minimumFractionDigits: 2,
     maximumFractionDigits: 4,
   });
-
-  if (!mounted) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-semibold">Resumen</h1>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-3">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="animate-pulse rounded-xl border border-neutral-800 bg-neutral-900/50 p-5">
-              <div className="mb-2 h-4 w-20 rounded bg-neutral-800" />
-              <div className="h-8 w-32 rounded bg-neutral-800" />
-            </div>
-          ))}
-        </div>
-        <div className="h-64 animate-pulse rounded-2xl border border-neutral-800 bg-neutral-900/40" />
-      </div>
-    );
-  }
 
   return (
     <div className="space-y-6">

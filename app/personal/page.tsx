@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { createServerSupabase } from "@/src/lib/supabase-server";
-import DashboardClient from "./DashboardClient";
+import DashboardClientWrapper from "./DashboardClientWrapper";
 
 export default async function DashboardPage() {
   const supabase = await createServerSupabase();
@@ -11,5 +11,5 @@ export default async function DashboardPage() {
 
   if (!user) redirect("/login");
 
-  return <DashboardClient />;
+  return <DashboardClientWrapper />;
 }

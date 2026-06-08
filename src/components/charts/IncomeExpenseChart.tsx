@@ -20,6 +20,37 @@ interface MonthData {
   gastos: number;
 }
 
+function MobileMonthRow({ m, maxVal }: { m: MonthData; maxVal: number }) {
+  const incPct = maxVal > 0 ? (m.ingresos / maxVal) * 100 : 0;
+  const gasPct = maxVal > 0 ? (m.gastos / maxVal) * 100 : 0;
+  const bal = m.ingresos - m.gastos;
+
+  return (
+    <div className="rounded-xl border border-neutral-800/40 bg-neutral-950/30 p-3">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-xs font-semibold text-neutral-300">{m.label}</span>
+        <span className={`text-xs font-medium ${bal >= 0 ? "text-emerald-400" : "text-red-400"}`}>
+          {bal >= 0 ? "+" : ""}L. {formatNumber(bal, 0)}
+        </span>
+      </div>
+      <div className="space-y-1.5">
+        <div className="flex items-center gap-2 text-[11px]">
+          <span className="w-12 shrink-0 text-right text-emerald-400">+L.{formatNumber(m.ingresos, 0)}</span>
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-neutral-800">
+            <div className="h-full rounded-full bg-emerald-500 transition-all" style={{ width: `${incPct}%` }} />
+          </div>
+        </div>
+        <div className="flex items-center gap-2 text-[11px]">
+          <span className="w-12 shrink-0 text-right text-red-400">-L.{formatNumber(m.gastos, 0)}</span>
+          <div className="h-2 flex-1 overflow-hidden rounded-full bg-neutral-800">
+            <div className="h-full rounded-full bg-red-500 transition-all" style={{ width: `${gasPct}%` }} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function IncomeExpenseChart({ ingresos, gastos, rate }: Props) {
   const chartRef = useRef<HTMLDivElement>(null);
 
@@ -146,8 +177,7 @@ export default function IncomeExpenseChart({ ingresos, gastos, rate }: Props) {
       });
 
       gsap.from(".chart-bar", {
-        scaleY: 0,
-        transformOrigin: "bottom",
+        attr: { height: 0, y: baseline },
         duration: 1.2,
         stagger: 0.04,
         ease: "power4.out",
@@ -195,7 +225,13 @@ export default function IncomeExpenseChart({ ingresos, gastos, rate }: Props) {
         </p>
       </div>
 
-      <div className="w-full overflow-x-auto">
+      <div className="sm:hidden space-y-2">
+        {months.map((m) => (
+          <MobileMonthRow key={`${m.year}-${m.month}`} m={m} maxVal={maxVal} />
+        ))}
+      </div>
+
+      <div className="max-sm:hidden w-full overflow-x-auto">
         <svg viewBox="0 0 800 240" className="min-w-[700px] w-full select-none">
           <defs>
             <linearGradient id="chartIncGrad" x1="0" y1="0" x2="0" y2="1">
@@ -340,7 +376,7 @@ export default function IncomeExpenseChart({ ingresos, gastos, rate }: Props) {
         </svg>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-center gap-6 border-t border-neutral-800/60 pt-3 text-xs font-medium text-neutral-400">
+      <div className="mt-3 max-sm:hidden flex-wrap items-center justify-center gap-6 border-t border-neutral-800/60 pt-3 text-xs font-medium text-neutral-400 sm:flex">
         <div className="flex items-center gap-2">
           <span className="inline-block h-2.5 w-5 rounded-md bg-gradient-to-b from-emerald-400 to-emerald-600" />
           <span>Ingresos</span>
