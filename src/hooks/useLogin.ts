@@ -24,6 +24,10 @@ export function useLogin() {
 
     if (res.ok) {
       window.location.reload();
+    } else if (res.status === 429) {
+      isSubmittingRef.current = false;
+      const data = await res.json();
+      setPinError(data.error || "Demasiados intentos.");
     } else {
       isSubmittingRef.current = false;
       const data = await res.json();
