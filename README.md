@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MoneyMap
 
-## Getting Started
+Control de finanzas personales. Una aplicación web moderna para registrar ingresos y gastos, visualizar balances con gráficos interactivos, y consultar la tasa de cambio USD/HNL en tiempo real.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** — App Router, Server Actions, React 19
+- **Supabase** — Autenticación (Google OAuth), base de datos PostgreSQL
+- **TanStack Query** — Data fetching y cache en el cliente
+- **TanStack Table** — Tablas con ordenamiento por columnas
+- **GSAP** — Animaciones de UI y transiciones
+- **Tailwind CSS v4** — Estilos utilitarios
+- **BCH API** — Tasa de cambio del Banco Central de Honduras
+
+## Requisitos
+
+- Node.js 20+
+- Una cuenta en [Supabase](https://supabase.com) con proyecto configurado
+- Una cuenta en [BCH API](https://bchapi-am.developer.azure-api.net) (para la tasa de cambio)
+
+## Configuración
+
+1. Clonar el repositorio e instalar dependencias:
+
+```bash
+npm install
+```
+
+2. Copiar `.env` y completar las variables:
+
+| Variable | Descripción |
+|---|---|
+| `SUPABASE_URL` | URL de tu proyecto Supabase |
+| `SUPABASE_ANON_KEY` | Anon key de Supabase |
+| `NEXT_PUBLIC_SUPABASE_URL` | Misma URL (expuesta al cliente) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Misma anon key (expuesta al cliente) |
+| `ACCESS_CODE` | PIN de 6 dígitos para el primer factor de autenticación |
+| `BCH_API_KEY` | API key del portal de desarrollador del BCH |
+| `BCH_API_URL` | `https://bchapi-am.azure-api.net` |
+
+3. Configurar Supabase:
+   - Crear las tablas `ingresos` y `gastos` en el schema `money`
+   - Habilitar Google OAuth en Authentication > Providers
+   - Configurar la URL de redirección: `http://localhost:3000/auth/callback`
+
+4. Iniciar el servidor de desarrollo:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Uso
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+La aplicación tiene un flujo de autenticación de dos factores:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **PIN de acceso** — Ingresar el código de 6 dígitos configurado en `ACCESS_CODE`
+2. **Google OAuth** — Iniciar sesión con una cuenta de Google vinculada a Supabase
 
-## Learn More
+Una vez dentro, el dashboard muestra un resumen con:
+- Balance total (ingresos - gastos) convertido a lempiras
+- Tasa de cambio USD/HNL actual con indicador de fuente (BCH o fallback)
+- Gráfico de ingresos vs gastos de los últimos 6 meses
+- Distribución de ingresos y gastos por categoría
 
-To learn more about Next.js, take a look at the following resources:
+### Páginas
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Ruta | Descripción |
+|---|---|
+| `/login` | Inicio de sesión con PIN + Google |
+| `/personal` | Dashboard con resumen y gráficos |
+| `/personal/ingresos` | CRUD de ingresos con tabla ordenable |
+| `/personal/gastos` | CRUD de gastos con tabla ordenable |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Cada registro de ingreso o gasto incluye nombre, monto, moneda (HNL/USD) y fecha. Los montos en USD se convierten automáticamente usando la tasa de cambio vigente.
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+npm run dev    # Servidor de desarrollo
+npm run build  # Build de producción
+npm run start  # Servidor de producción
+npm run lint   # Linter
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Licencia
+
+MIT
