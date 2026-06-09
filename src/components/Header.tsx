@@ -47,9 +47,9 @@ export default function Header() {
           className="group flex items-center gap-2 text-base font-semibold text-emerald-400 hover:text-emerald-300"
         >
           <img
-            src="/logo-header.svg"
+            src="/favicon.svg"
             alt="MoneyMap"
-            className="-mt-1.5 h-6 w-auto brightness-125 saturate-150 transition-all duration-200 group-hover:brightness-150 group-hover:saturate-200 sm:h-7"
+            className="-mt-1 h-6 w-auto brightness-125 saturate-150 transition-all duration-200 group-hover:brightness-150 group-hover:saturate-200 sm:h-7"
           />
           <span>MoneyMap</span>
         </Link>
