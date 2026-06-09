@@ -1,7 +1,7 @@
 "use client";
 
 import { Icon } from "@iconify/react";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import {
   useIngresos,
   useGastos,
@@ -20,8 +20,16 @@ function convertToHnl(amount: number, currency: string, rate: number) {
 export default function DashboardClient() {
   const { data: ingresos = [] } = useIngresos();
   const { data: gastos = [] } = useGastos();
-  const { data: rateInfo } = useCurrentRate();
+  const { data: rateInfo, isLoading: rateLoading } = useCurrentRate();
   const refreshRate = useRefreshRate();
+
+  useEffect(() => {
+    if (rateInfo?.rate) {
+      try {
+        localStorage.setItem("bch_exchange_rate", JSON.stringify(rateInfo));
+      } catch {}
+    }
+  }, [rateInfo]);
 
   const rate = rateInfo?.rate ?? 26.5;
   const rateSourceLabel = rateInfo?.source === "api" ? "BCH" : "Default";
@@ -29,7 +37,8 @@ export default function DashboardClient() {
   const totalIngresosHnl = useMemo(
     () =>
       ingresos.reduce(
-        (acc, ing) => acc + convertToHnl(Number(ing.amount), ing.currency || "HNL", rate),
+        (acc, ing) =>
+          acc + convertToHnl(Number(ing.amount), ing.currency || "HNL", rate),
         0,
       ),
     [ingresos, rate],
@@ -38,7 +47,8 @@ export default function DashboardClient() {
   const totalGastosHnl = useMemo(
     () =>
       gastos.reduce(
-        (acc, gas) => acc + convertToHnl(Number(gas.amount), gas.currency || "HNL", rate),
+        (acc, gas) =>
+          acc + convertToHnl(Number(gas.amount), gas.currency || "HNL", rate),
         0,
       ),
     [gastos, rate],
@@ -67,18 +77,20 @@ export default function DashboardClient() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold">Resumen</h1>
-        <button
-          onClick={() => refreshRate.mutate()}
-          disabled={refreshRate.isPending}
-          className="flex cursor-pointer items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/80 px-3 py-1.5 text-xs font-medium text-neutral-300 transition-colors hover:border-neutral-700 hover:text-white disabled:opacity-50"
-          title="Tasa de cambio USD → HNL"
-        >
-          <span
-            className={`inline-block h-2 w-2 rounded-full ${refreshRate.isPending ? "animate-pulse bg-yellow-400" : "bg-emerald-400"}`}
-          />
-          1 USD = L. {rateFormatted}
-          <span className="text-neutral-500">({rateSourceLabel})</span>
-        </button>
+        {rateLoading && !rateInfo ? (
+          <div className="flex animate-pulse items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/80 px-3 py-1.5">
+            <span className="inline-block h-2 w-2 rounded-full bg-neutral-600" />
+            <span className="text-xs font-medium text-neutral-500">1 USD = L. --</span>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/80 px-3 py-1.5 text-xs font-medium text-neutral-300">
+            <span
+              className={`inline-block h-2 w-2 rounded-full ${refreshRate.isPending ? "animate-pulse bg-yellow-400" : "bg-emerald-400"}`}
+            />
+            1 USD = L. {rateFormatted}
+            <span className="text-neutral-500">({rateSourceLabel})</span>
+          </div>
+        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
@@ -120,11 +132,7 @@ export default function DashboardClient() {
 
       <div className="grid gap-6">
         <div className="w-full">
-          <IncomeExpenseChart
-            ingresos={ingresos}
-            gastos={gastos}
-            rate={rate}
-          />
+          <IncomeExpenseChart ingresos={ingresos} gastos={gastos} rate={rate} />
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">

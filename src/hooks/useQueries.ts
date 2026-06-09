@@ -101,6 +101,16 @@ export function useCurrentRate() {
     queryKey: ["exchange-rate"],
     queryFn: () => fetchJson<RateResponse>("/api/exchange-rate"),
     staleTime: 12 * 60 * 60 * 1000,
+    placeholderData: () => {
+      if (typeof window === "undefined") return undefined;
+      try {
+        const raw = localStorage.getItem("bch_exchange_rate");
+        if (!raw) return undefined;
+        return JSON.parse(raw) as RateResponse;
+      } catch {
+        return undefined;
+      }
+    },
   });
 }
 
