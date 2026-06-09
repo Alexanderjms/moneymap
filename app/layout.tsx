@@ -12,7 +12,7 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: "MoneyMap",
   description: "Control de finanzas personales",
-  icons: { icon: "/favicon.svg", apple: "/logo-header.svg" },
+  icons: { icon: "/favicon.svg", apple: "/favicon.svg" },
   manifest: "/manifest.json",
 };
 
