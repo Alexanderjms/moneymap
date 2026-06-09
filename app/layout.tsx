@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import QueryProvider from "@/src/components/QueryProvider";
+import TitleBar from "@/src/components/TitleBar";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -27,6 +28,7 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${montserrat.variable} h-full antialiased`}>
       <body className="min-h-screen bg-neutral-950 font-sans text-neutral-100">
+        <TitleBar />
         <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
