@@ -176,19 +176,6 @@ export function useDeletePlanCompra() {
   });
 }
 
-export function useLogout() {
-  return useMutation({
-    mutationFn: () =>
-      fetch("/api/logout", { method: "POST" }).then((r) => {
-        if (!r.ok) throw new Error("Error al cerrar sesión");
-        return r;
-      }),
-    onSuccess: () => {
-      window.location.href = "/login";
-    },
-  });
-}
-
 export function useRefreshRate() {
   const qc = useQueryClient();
   return useMutation({

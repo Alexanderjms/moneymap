@@ -34,7 +34,7 @@ export default function RootLayout({
             __html: `
               try {
                 var t = localStorage.getItem("moneymap_theme");
-                if (t === "onyx" || t === "obsidian" || t === "esmeralda" || t === "rubi" || t === "grafito") {
+                if (t === "onyx" || t === "obsidian") {
                   document.documentElement.setAttribute("data-theme", t);
                 }
               } catch(e) {}

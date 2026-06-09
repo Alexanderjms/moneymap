@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function POST(request: NextRequest) {
-  const response = NextResponse.json({ ok: true });
+  const response = NextResponse.redirect(new URL("/login", request.url));
 
   const supabase = createServerClient(
     process.env.SUPABASE_URL!,

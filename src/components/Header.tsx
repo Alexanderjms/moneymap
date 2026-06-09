@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import gsap from "gsap";
 import { useTheme } from "@/src/contexts/ThemeContext";
-import { useLogout } from "@/src/hooks/useQueries";
 
 const THEMES = [
   { key: "default", label: "Neutral", color: "#404040" },
@@ -15,7 +14,6 @@ const THEMES = [
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
-  const logout = useLogout();
   const [menuOpen, setMenuOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
   const [themesExpanded, setThemesExpanded] = useState(false);
@@ -174,15 +172,15 @@ export default function Header() {
             )}
           </div>
 
-          <button
-            type="button"
-            onClick={() => logout.mutate()}
-            disabled={logout.isPending}
-            className="flex cursor-pointer items-center gap-1.5 text-sm text-neutral-500 hover:text-red-400 transition-colors disabled:opacity-50"
-          >
-            <Icon icon="mdi:logout" className="h-5 w-5" />
-            <span>Salir</span>
-          </button>
+          <form method="POST" action="/api/logout">
+            <button
+              type="submit"
+              className="flex cursor-pointer items-center gap-1.5 text-sm text-neutral-500 hover:text-red-400 transition-colors"
+            >
+              <Icon icon="mdi:logout" className="h-5 w-5" />
+              <span>Salir</span>
+            </button>
+          </form>
         </div>
 
         <button
@@ -295,15 +293,15 @@ export default function Header() {
           </div>
         </div>
 
-        <button
-          type="button"
-          onClick={() => logout.mutate()}
-          disabled={logout.isPending}
-          className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-500 hover:bg-neutral-800/60 hover:text-red-400 transition-colors disabled:opacity-50"
-        >
-          <Icon icon="mdi:logout" className="h-5 w-5" />
-          Salir
-        </button>
+        <form method="POST" action="/api/logout" className="mt-4">
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-500 hover:bg-neutral-800/60 hover:text-red-400 transition-colors"
+          >
+            <Icon icon="mdi:logout" className="h-5 w-5" />
+            Salir
+          </button>
+        </form>
       </div>
     </div>
     </>
