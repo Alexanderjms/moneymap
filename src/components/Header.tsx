@@ -14,34 +14,77 @@ const THEMES = [
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
-  const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement>(null);
+  const [themesExpanded, setThemesExpanded] = useState(false);
+  const themesBodyRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
   const themeBtnRef = useRef<HTMLButtonElement>(null);
   const themeMenuRef = useRef<HTMLDivElement>(null);
+  const menuDrawerRef = useRef<HTMLDivElement>(null);
+  const menuBackdropRef = useRef<HTMLDivElement>(null);
+
+  function openMobileMenu() {
+    setMenuOpen(true);
+    document.body.style.overflow = "hidden";
+    gsap.set(menuDrawerRef.current, { x: "100%", force3D: true });
+    gsap.set(menuBackdropRef.current, { opacity: 0, pointerEvents: "none" });
+    menuBackdropRef.current?.classList.add("backdrop-blur-sm");
+    gsap.to(menuBackdropRef.current, {
+      opacity: 1,
+      pointerEvents: "auto",
+      duration: 0.25,
+      ease: "power4.out",
+    });
+    gsap.to(menuDrawerRef.current, {
+      x: "0%",
+      duration: 0.35,
+      ease: "power4.out",
+    });
+  }
+
+  function closeMobileMenu() {
+    setMenuOpen(false);
+    document.body.style.overflow = "";
+    gsap.to(menuBackdropRef.current, {
+      opacity: 0,
+      pointerEvents: "none",
+      duration: 0.15,
+      ease: "power2.inOut",
+    });
+    gsap.to(menuDrawerRef.current, {
+      x: "100%",
+      duration: 0.25,
+      ease: "power2.inOut",
+      onComplete: () => {
+        menuBackdropRef.current?.classList.remove("backdrop-blur-sm");
+      },
+    });
+  }
 
   useEffect(() => {
-    if (open) {
-      gsap.fromTo(
-        menuRef.current,
-        { opacity: 0, scaleY: 0.95, transformOrigin: "top center" },
-        { opacity: 1, scaleY: 1, duration: 0.2, ease: "power2.out" },
-      );
+    const el = themesBodyRef.current;
+    if (!el) return;
+    if (themesExpanded) {
+      gsap.set(el, { display: "block", height: "auto" });
+      const h = el.scrollHeight;
+      gsap.set(el, { height: 0, opacity: 0 });
+      gsap.to(el, { height: h, opacity: 1, duration: 0.3, ease: "power2.out" });
+    } else {
+      gsap.to(el, { height: 0, opacity: 0, duration: 0.2, ease: "power2.inOut", onComplete: () => { gsap.set(el, { display: "none" }); } });
     }
-  }, [open]);
+  }, [themesExpanded]);
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape" && menuOpen) closeMobileMenu();
+    }
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [menuOpen]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (
-        open &&
-        menuRef.current &&
-        !menuRef.current.contains(e.target as Node) &&
-        btnRef.current &&
-        !btnRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
       if (
         themeOpen &&
         themeMenuRef.current &&
@@ -54,12 +97,13 @@ export default function Header() {
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [open, themeOpen]);
+  }, [themeOpen]);
 
   const linkClass =
     "flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors";
 
   return (
+    <>
     <header className="sticky top-0 z-30 border-b border-neutral-800/50 bg-neutral-950/70 backdrop-blur-md">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
         <Link
@@ -142,61 +186,96 @@ export default function Header() {
         <button
           ref={btnRef}
           type="button"
-          onClick={() => setOpen(!open)}
+          onClick={() => (menuOpen ? closeMobileMenu() : openMobileMenu())}
           className="flex cursor-pointer items-center gap-1 text-sm text-neutral-400 hover:text-white transition-colors sm:hidden"
-          aria-label={open ? "Cerrar menú" : "Abrir menú"}
+          aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
         >
-          <Icon icon={open ? "mdi:close" : "mdi:menu"} className="h-6 w-6" />
+          <Icon icon={menuOpen ? "mdi:close" : "mdi:menu"} className="h-6 w-6" />
         </button>
       </nav>
 
-      {open && (
-        <div
-          ref={menuRef}
-          className="border-t border-neutral-800/50 bg-neutral-950/95 backdrop-blur-md sm:hidden"
+    </header>
+
+    <div
+      ref={menuBackdropRef}
+      className="pointer-events-none fixed inset-0 z-40 bg-black/60 opacity-0 sm:hidden"
+      onClick={closeMobileMenu}
+    />
+
+    <div
+      ref={menuDrawerRef}
+      className="fixed inset-y-0 right-0 z-50 flex w-full flex-col border-l border-neutral-800 bg-neutral-950 shadow-2xl will-change-transform sm:hidden"
+      style={{ transform: "translateX(100%)" }}
+    >
+      <div className="flex items-center justify-between border-b border-neutral-800 px-4 py-4">
+        <span className="text-lg font-semibold">Menú</span>
+        <button
+          type="button"
+          onClick={closeMobileMenu}
+          className="cursor-pointer text-neutral-500 hover:text-white"
+          aria-label="Cerrar menú"
         >
-          <div className="flex flex-col gap-1 px-4 py-3">
-            <Link
-              href="/personal/"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
-            >
-              <Icon icon="mdi:home" className="h-5 w-5" />
-              Home
-            </Link>
-            <Link
-              href="/personal/ingresos"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
-            >
-              <Icon icon="mdi:plus-circle" className="h-5 w-5" />
-              Ingresos
-            </Link>
-            <Link
-              href="/personal/gastos"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
-            >
-              <Icon icon="mdi:trending-down" className="h-5 w-5" />
-              Gastos
-            </Link>
-            <Link
-              href="/personal/plan-compras"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
-            >
-              <Icon icon="mdi:cart-outline" className="h-5 w-5" />
-              Plan de compras
-            </Link>
-            <div className="border-t border-neutral-800/50 my-1 pt-1">
-              <p className="px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
-                Tema
-              </p>
+          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 15 15">
+            <path d="M12.854.146a.5.5 0 0 0-.707 0L7.5 4.793 2.854.146a.5.5 0 0 0-.708.708L6.793 5.5.146 10.146a.5.5 0 0 0 .708.708L7.5 6.207l4.646 4.647a.5.5 0 0 0 .708-.708L8.207 5.5l4.647-4.646a.5.5 0 0 0 0-.708z" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4 py-6">
+        <div className="flex flex-col gap-1">
+          <Link
+            href="/personal/"
+            onClick={closeMobileMenu}
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
+          >
+            <Icon icon="mdi:home" className="h-5 w-5" />
+            Home
+          </Link>
+          <Link
+            href="/personal/ingresos"
+            onClick={closeMobileMenu}
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
+          >
+            <Icon icon="mdi:plus-circle" className="h-5 w-5" />
+            Ingresos
+          </Link>
+          <Link
+            href="/personal/gastos"
+            onClick={closeMobileMenu}
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
+          >
+            <Icon icon="mdi:trending-down" className="h-5 w-5" />
+            Gastos
+          </Link>
+          <Link
+            href="/personal/plan-compras"
+            onClick={closeMobileMenu}
+            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
+          >
+            <Icon icon="mdi:cart-outline" className="h-5 w-5" />
+            Plan de compras
+          </Link>
+        </div>
+
+        <div className="border-t border-neutral-800/50 my-4 pt-4">
+          <button
+            type="button"
+            onClick={() => setThemesExpanded(!themesExpanded)}
+            className="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-neutral-500 hover:text-white transition-colors"
+          >
+            Tema
+            <Icon
+              icon={themesExpanded ? "mdi:chevron-up" : "mdi:chevron-down"}
+              className="h-4 w-4"
+            />
+          </button>
+          <div ref={themesBodyRef} className="overflow-hidden" style={{ height: 0, opacity: 0, display: "none" }}>
+            <div className="space-y-1 pt-1">
               {THEMES.map((t) => (
                 <button
                   key={t.key}
                   type="button"
-                  onClick={() => { setTheme(t.key as typeof theme); setThemeOpen(false); }}
+                  onClick={() => { setTheme(t.key as typeof theme); closeMobileMenu(); }}
                   className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
                     theme === t.key
                       ? "text-white bg-neutral-800"
@@ -211,18 +290,20 @@ export default function Header() {
                 </button>
               ))}
             </div>
-            <form method="POST" action="/api/logout" className="mt-1">
-              <button
-                type="submit"
-                className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-500 hover:bg-neutral-800/60 hover:text-red-400 transition-colors"
-              >
-                <Icon icon="mdi:logout" className="h-5 w-5" />
-                Salir
-              </button>
-            </form>
           </div>
         </div>
-      )}
-    </header>
+
+        <form method="POST" action="/api/logout" className="mt-4">
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-500 hover:bg-neutral-800/60 hover:text-red-400 transition-colors"
+          >
+            <Icon icon="mdi:logout" className="h-5 w-5" />
+            Salir
+          </button>
+        </form>
+      </div>
+    </div>
+    </>
   );
 }
