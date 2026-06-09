@@ -33,7 +33,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `
               try {
-                var t = localStorage.getItem("moneymap_theme");
+                var t = sessionStorage.getItem("moneymap_theme") || localStorage.getItem("moneymap_theme");
                 if (t === "onyx" || t === "obsidian") {
                   document.documentElement.setAttribute("data-theme", t);
                 }
