@@ -19,15 +19,15 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #1e293b;
+  background: transparent;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #334155;
+  background: transparent;
 }
 
 * {
-  scrollbar-width: thin;
-  scrollbar-color: #1e293b #0f172a;
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
 }
