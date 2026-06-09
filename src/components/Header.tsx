@@ -10,6 +10,9 @@ const THEMES = [
   { key: "default", label: "Neutral", color: "#404040" },
   { key: "onyx", label: "Ónice", color: "#3b82f6" },
   { key: "obsidian", label: "Obsidiana", color: "#8b5cf6" },
+  { key: "esmeralda", label: "Esmeralda", color: "#10b981" },
+  { key: "rubi", label: "Rubí", color: "#ef4444" },
+  { key: "grafito", label: "Grafito", color: "#6b7280" },
 ] as const;
 
 export default function Header() {

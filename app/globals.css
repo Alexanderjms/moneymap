@@ -55,6 +55,57 @@
   --c-chart-donut-bg: #20203a;
 }
 
+[data-theme="esmeralda"] {
+  --color-neutral-950: #060d08;
+  --color-neutral-900: #0d1a11;
+  --color-neutral-800: #15261a;
+  --color-neutral-700: #1e3324;
+  --color-neutral-600: #6fa87d;
+  --color-neutral-500: #6fa87d;
+  --color-neutral-400: #a7d4b0;
+  --color-neutral-300: #a7d4b0;
+  --color-neutral-200: #ecfdf3;
+  --color-neutral-100: #ecfdf3;
+  --c-chart-grid: #15261a;
+  --c-chart-axis: #6fa87d;
+  --c-chart-month: #a7d4b0;
+  --c-chart-donut-bg: #15261a;
+}
+
+[data-theme="rubi"] {
+  --color-neutral-950: #0f0808;
+  --color-neutral-900: #1f0f0f;
+  --color-neutral-800: #2e1a1a;
+  --color-neutral-700: #3e2424;
+  --color-neutral-600: #a86d6d;
+  --color-neutral-500: #a86d6d;
+  --color-neutral-400: #d4a0a0;
+  --color-neutral-300: #d4a0a0;
+  --color-neutral-200: #fdecec;
+  --color-neutral-100: #fdecec;
+  --c-chart-grid: #2e1a1a;
+  --c-chart-axis: #a86d6d;
+  --c-chart-month: #d4a0a0;
+  --c-chart-donut-bg: #2e1a1a;
+}
+
+[data-theme="grafito"] {
+  --color-neutral-950: #121212;
+  --color-neutral-900: #1e1e1e;
+  --color-neutral-800: #2c2c2c;
+  --color-neutral-700: #383838;
+  --color-neutral-600: #808080;
+  --color-neutral-500: #808080;
+  --color-neutral-400: #b0b0b0;
+  --color-neutral-300: #b0b0b0;
+  --color-neutral-200: #f0f0f0;
+  --color-neutral-100: #f0f0f0;
+  --c-chart-grid: #2c2c2c;
+  --c-chart-axis: #808080;
+  --c-chart-month: #b0b0b0;
+  --c-chart-donut-bg: #2c2c2c;
+}
+
 body {
   background: var(--color-neutral-950);
   color: var(--color-neutral-100);

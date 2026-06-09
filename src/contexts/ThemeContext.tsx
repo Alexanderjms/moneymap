@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import type { ReactNode } from "react";
 
-type Theme = "default" | "onyx" | "obsidian";
+type Theme = "default" | "onyx" | "obsidian" | "esmeralda" | "rubi" | "grafito";
 
 interface ThemeContextValue {
   theme: Theme;
@@ -19,7 +19,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const saved = localStorage.getItem(THEME_KEY);
-    if (saved === "onyx" || saved === "obsidian") {
+    if (saved === "onyx" || saved === "obsidian" || saved === "esmeralda" || saved === "rubi" || saved === "grafito") {
       setThemeState(saved);
       document.documentElement.setAttribute("data-theme", saved);
     }
