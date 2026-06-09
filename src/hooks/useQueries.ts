@@ -11,6 +11,7 @@ export function useIngresos() {
   return useQuery<Ingreso[]>({
     queryKey: ["ingresos"],
     queryFn: () => fetchJson<Ingreso[]>("/api/ingresos"),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -18,6 +19,7 @@ export function useGastos() {
   return useQuery<Gasto[]>({
     queryKey: ["gastos"],
     queryFn: () => fetchJson<Gasto[]>("/api/gastos"),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -106,6 +108,7 @@ export function usePlanCompras() {
   return useQuery<PlanCompra[]>({
     queryKey: ["plan-compras"],
     queryFn: () => fetchJson<PlanCompra[]>("/api/plan-compras"),
+    staleTime: 5 * 60 * 1000,
   });
 }
 
