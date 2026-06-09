@@ -80,10 +80,12 @@ export default function DashboardClient() {
         {rateLoading && !rateInfo ? (
           <div className="flex animate-pulse items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/80 px-3 py-1.5">
             <span className="inline-block h-2 w-2 rounded-full bg-neutral-600" />
-            <span className="text-xs font-medium text-neutral-500">1 USD = L. --</span>
+            <span className="text-xs font-medium text-neutral-500">
+              1 USD = L. --
+            </span>
           </div>
         ) : (
-          <div className="flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/80 px-3 py-1.5 text-xs font-medium text-neutral-300">
+          <div className="flex items-center gap-2 rounded-full border border-neutral-800 bg-neutral-900/80 px-3 py-1.5 text-xs font-medium text-neutral-300 pointer-events-none">
             <span
               className={`inline-block h-2 w-2 rounded-full ${refreshRate.isPending ? "animate-pulse bg-yellow-400" : "bg-emerald-400"}`}
             />
