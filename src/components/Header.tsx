@@ -4,11 +4,22 @@ import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import gsap from "gsap";
+import { useTheme } from "@/src/contexts/ThemeContext";
+
+const THEMES = [
+  { key: "default", label: "Neutral", color: "#404040" },
+  { key: "onyx", label: "Ónice", color: "#3b82f6" },
+  { key: "obsidian", label: "Obsidiana", color: "#8b5cf6" },
+] as const;
 
 export default function Header() {
+  const { theme, setTheme } = useTheme();
   const [open, setOpen] = useState(false);
+  const [themeOpen, setThemeOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const btnRef = useRef<HTMLButtonElement>(null);
+  const themeBtnRef = useRef<HTMLButtonElement>(null);
+  const themeMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (open) {
@@ -31,10 +42,19 @@ export default function Header() {
       ) {
         setOpen(false);
       }
+      if (
+        themeOpen &&
+        themeMenuRef.current &&
+        !themeMenuRef.current.contains(e.target as Node) &&
+        themeBtnRef.current &&
+        !themeBtnRef.current.contains(e.target as Node)
+      ) {
+        setThemeOpen(false);
+      }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
-  }, [open]);
+  }, [open, themeOpen]);
 
   const linkClass =
     "flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors";
@@ -71,6 +91,43 @@ export default function Header() {
             <Icon icon="mdi:cart-outline" className="h-5 w-5" />
             <span>Plan de compras</span>
           </Link>
+          <div className="relative">
+            <button
+              ref={themeBtnRef}
+              type="button"
+              onClick={() => setThemeOpen(!themeOpen)}
+              className="flex cursor-pointer items-center gap-1.5 text-sm text-neutral-400 hover:text-white transition-colors"
+              aria-label="Cambiar tema"
+            >
+              <Icon icon="mdi:palette" className="h-5 w-5" />
+            </button>
+            {themeOpen && (
+              <div
+                ref={themeMenuRef}
+                className="absolute right-0 top-full mt-2 w-40 rounded-xl border border-neutral-800 bg-neutral-900 p-1.5 shadow-lg"
+              >
+                {THEMES.map((t) => (
+                  <button
+                    key={t.key}
+                    type="button"
+                    onClick={() => { setTheme(t.key as typeof theme); setThemeOpen(false); }}
+                    className={`flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm transition-colors ${
+                      theme === t.key
+                        ? "text-white bg-neutral-800"
+                        : "text-neutral-400 hover:text-white hover:bg-neutral-800/60"
+                    }`}
+                  >
+                    <span
+                      className="inline-block h-3 w-3 rounded-full"
+                      style={{ backgroundColor: t.color }}
+                    />
+                    {t.label}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
           <form method="POST" action="/api/logout">
             <button
               type="submit"
@@ -131,6 +188,29 @@ export default function Header() {
               <Icon icon="mdi:cart-outline" className="h-5 w-5" />
               Plan de compras
             </Link>
+            <div className="border-t border-neutral-800/50 my-1 pt-1">
+              <p className="px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-neutral-500">
+                Tema
+              </p>
+              {THEMES.map((t) => (
+                <button
+                  key={t.key}
+                  type="button"
+                  onClick={() => { setTheme(t.key as typeof theme); setThemeOpen(false); }}
+                  className={`flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
+                    theme === t.key
+                      ? "text-white bg-neutral-800"
+                      : "text-neutral-400 hover:text-white hover:bg-neutral-800/60"
+                  }`}
+                >
+                  <span
+                    className="inline-block h-3 w-3 rounded-full"
+                    style={{ backgroundColor: t.color }}
+                  />
+                  {t.label}
+                </button>
+              ))}
+            </div>
             <form method="POST" action="/api/logout" className="mt-1">
               <button
                 type="submit"

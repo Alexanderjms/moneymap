@@ -267,14 +267,14 @@ export default function IncomeExpenseChart({ ingresos, gastos, rate }: Props) {
                   y1={line.y}
                   x2={xOffset + chartWidth}
                   y2={line.y}
-                  stroke="#262626"
+                  stroke="var(--c-chart-grid)"
                   strokeWidth="1.5"
                   strokeDasharray="4 6"
                 />
                 <text
                   x={xOffset - 12}
                   y={line.y + 4}
-                  fill="#737373"
+                  fill="var(--c-chart-axis)"
                   fontSize="11"
                   fontFamily="system-ui"
                   textAnchor="end"
@@ -322,7 +322,7 @@ export default function IncomeExpenseChart({ ingresos, gastos, rate }: Props) {
                   className="chart-fade-in opacity-0"
                   x={bar.linePoint.x}
                   y={baseline + 24}
-                  fill="#A3A3A3"
+                  fill="var(--c-chart-month)"
                   fontSize="11"
                   fontWeight="600"
                   fontFamily="system-ui"

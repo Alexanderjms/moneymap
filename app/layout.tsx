@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import QueryProvider from "@/src/components/QueryProvider";
+import { ThemeProvider } from "@/src/contexts/ThemeContext";
 import ServiceWorkerRegister from "@/src/components/ServiceWorkerRegister";
 import "./globals.css";
 
@@ -26,10 +27,26 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${montserrat.variable} h-full antialiased`}>
+    <html lang="es" className={`${montserrat.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var t = localStorage.getItem("moneymap_theme");
+                if (t === "onyx" || t === "obsidian") {
+                  document.documentElement.setAttribute("data-theme", t);
+                }
+              } catch(e) {}
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-screen bg-neutral-950 font-sans text-neutral-100">
         <ServiceWorkerRegister />
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <ThemeProvider>{children}</ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

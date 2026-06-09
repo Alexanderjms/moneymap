@@ -111,7 +111,7 @@ export default function IncomeDistribution({ ingresos, rate }: Props) {
               cy="80"
               r="60"
               fill="none"
-              stroke="#262626"
+              stroke="var(--c-chart-donut-bg)"
               strokeWidth="18"
             />
 
