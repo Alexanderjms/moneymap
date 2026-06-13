@@ -18,7 +18,7 @@ export default function Header() {
   const pathname = usePathname();
 
   function isActive(href: string) {
-    if (href === "/personal/") return pathname === "/personal/";
+    if (href === "/personal/") return pathname === "/personal/" || pathname === "/personal";
     return pathname.startsWith(href);
   }
 
