@@ -177,6 +177,7 @@ export default function Header() {
               aria-label="Cambiar tema"
             >
               <Icon icon="mdi:palette" className="h-5 w-5" />
+              <span>Temas</span>
             </button>
             {themeOpen && (
               <div
