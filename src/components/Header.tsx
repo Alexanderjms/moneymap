@@ -123,7 +123,7 @@ export default function Header() {
           <span>MoneyMap</span>
         </Link>
 
-        <div className="hidden items-center gap-2 text-base sm:flex">
+        <div className="hidden items-center gap-4 text-base sm:flex">
           <Link
             href="/personal/"
             className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
