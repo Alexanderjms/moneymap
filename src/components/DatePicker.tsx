@@ -70,15 +70,12 @@ export default function DatePicker({
   accent = "emerald",
   onChange,
 }: Props) {
-  const today = new Date();
-  const todayStr = toDateStr(today);
-  const initialValue = value || todayStr;
-  const initialDate = new Date(initialValue + "T12:00:00");
+  const todayStr = toDateStr(new Date());
+  const displayDate = value || todayStr;
 
-  const [selectedDate, setSelectedDate] = useState(initialValue);
   const [isOpen, setIsOpen] = useState(false);
-  const [viewYear, setViewYear] = useState(initialDate.getFullYear());
-  const [viewMonth, setViewMonth] = useState(initialDate.getMonth());
+  const [viewYear, setViewYear] = useState(() => new Date(displayDate + "T12:00:00").getFullYear());
+  const [viewMonth, setViewMonth] = useState(() => new Date(displayDate + "T12:00:00").getMonth());
   const pickerRef = useRef<HTMLDivElement>(null);
 
   const days = getMonthDays(viewYear, viewMonth);
@@ -93,9 +90,16 @@ export default function DatePicker({
     return () => document.removeEventListener("click", handleClick);
   }, []);
 
+  useEffect(() => {
+    if (value) {
+      const d = new Date(value + "T12:00:00");
+      setViewYear(d.getFullYear());
+      setViewMonth(d.getMonth());
+    }
+  }, [value]);
+
   function selectDay(day: Day) {
     const dateStr = `${day.year}-${String(day.month + 1).padStart(2, "0")}-${String(day.day).padStart(2, "0")}`;
-    setSelectedDate(dateStr);
     setIsOpen(false);
     onChange?.(dateStr);
   }
@@ -136,7 +140,7 @@ export default function DatePicker({
         } as React.CSSProperties
       }
     >
-      <input type="hidden" name={name} value={selectedDate} readOnly />
+      <input type="hidden" name={name} value={displayDate} readOnly />
 
       <button
         type="button"
@@ -144,7 +148,7 @@ export default function DatePicker({
         onClick={() => setIsOpen(!isOpen)}
         className={`flex w-full cursor-pointer items-center justify-between rounded-lg border border-neutral-700 bg-neutral-800/50 px-3 py-2 text-sm text-white outline-none transition-colors hover:border-neutral-600 ${accentBorder} focus:ring-1`}
       >
-        <span data-display>{formatDisplay(selectedDate)}</span>
+        <span data-display>{formatDisplay(displayDate)}</span>
         <svg
           className="h-4 w-4 text-neutral-500"
           fill="currentColor"
@@ -197,7 +201,7 @@ export default function DatePicker({
           <div data-days className="grid grid-cols-7 gap-y-1 text-center text-sm">
             {days.map((d, i) => {
               const dateStr = `${d.year}-${String(d.month + 1).padStart(2, "0")}-${String(d.day).padStart(2, "0")}`;
-              const isSelected = dateStr === selectedDate;
+              const isSelected = dateStr === displayDate;
               const isToday = dateStr === todayStr && !isSelected;
 
               return (
