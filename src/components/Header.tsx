@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
 import { Icon } from "@iconify/react";
 import gsap from "gsap";
@@ -14,6 +15,13 @@ const THEMES = [
 
 export default function Header() {
   const { theme, setTheme } = useTheme();
+  const pathname = usePathname();
+
+  function isActive(href: string) {
+    if (href === "/personal/") return pathname === "/personal/";
+    return pathname.startsWith(href);
+  }
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
   const [themesExpanded, setThemesExpanded] = useState(false);
@@ -99,9 +107,6 @@ export default function Header() {
     return () => document.removeEventListener("mousedown", handleClick);
   }, [themeOpen]);
 
-  const linkClass =
-    "flex items-center gap-2 text-sm text-neutral-400 hover:text-white transition-colors";
-
   return (
     <>
     <header className="sticky top-0 z-30 border-b border-neutral-800/50 bg-neutral-950/70 backdrop-blur-md">
@@ -118,20 +123,48 @@ export default function Header() {
           <span>MoneyMap</span>
         </Link>
 
-        <div className="hidden items-center gap-5 text-base sm:flex">
-          <Link href="/personal/" className={linkClass}>
+        <div className="hidden items-center gap-1 text-base sm:flex">
+          <Link
+            href="/personal/"
+            className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              isActive("/personal/")
+                ? "bg-neutral-800/60 text-white"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
             <Icon icon="mdi:home" className="h-5 w-5" />
             <span>Home</span>
           </Link>
-          <Link href="/personal/ingresos" className={linkClass}>
+          <Link
+            href="/personal/ingresos"
+            className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              isActive("/personal/ingresos")
+                ? "bg-neutral-800/60 text-white"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
             <Icon icon="mdi:plus-circle" className="h-5 w-5" />
             <span>Ingresos</span>
           </Link>
-          <Link href="/personal/gastos" className={linkClass}>
+          <Link
+            href="/personal/gastos"
+            className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              isActive("/personal/gastos")
+                ? "bg-neutral-800/60 text-white"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
             <Icon icon="mdi:trending-down" className="h-5 w-5" />
             <span>Gastos</span>
           </Link>
-          <Link href="/personal/plan-compras" className={linkClass}>
+          <Link
+            href="/personal/plan-compras"
+            className={`flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors ${
+              isActive("/personal/plan-compras")
+                ? "bg-neutral-800/60 text-white"
+                : "text-neutral-400 hover:text-white"
+            }`}
+          >
             <Icon icon="mdi:cart-outline" className="h-5 w-5" />
             <span>Plan de compras</span>
           </Link>
@@ -226,7 +259,11 @@ export default function Header() {
           <Link
             href="/personal/"
             onClick={closeMobileMenu}
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
+            className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors ${
+              isActive("/personal/")
+                ? "bg-neutral-800/60 text-white"
+                : "text-neutral-400 hover:bg-neutral-800/60 hover:text-white"
+            }`}
           >
             <Icon icon="mdi:home" className="h-5 w-5" />
             Home
@@ -234,7 +271,11 @@ export default function Header() {
           <Link
             href="/personal/ingresos"
             onClick={closeMobileMenu}
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
+            className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors ${
+              isActive("/personal/ingresos")
+                ? "bg-neutral-800/60 text-white"
+                : "text-neutral-400 hover:bg-neutral-800/60 hover:text-white"
+            }`}
           >
             <Icon icon="mdi:plus-circle" className="h-5 w-5" />
             Ingresos
@@ -242,7 +283,11 @@ export default function Header() {
           <Link
             href="/personal/gastos"
             onClick={closeMobileMenu}
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
+            className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors ${
+              isActive("/personal/gastos")
+                ? "bg-neutral-800/60 text-white"
+                : "text-neutral-400 hover:bg-neutral-800/60 hover:text-white"
+            }`}
           >
             <Icon icon="mdi:trending-down" className="h-5 w-5" />
             Gastos
@@ -250,7 +295,11 @@ export default function Header() {
           <Link
             href="/personal/plan-compras"
             onClick={closeMobileMenu}
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-neutral-400 hover:bg-neutral-800/60 hover:text-white transition-colors"
+            className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm transition-colors ${
+              isActive("/personal/plan-compras")
+                ? "bg-neutral-800/60 text-white"
+                : "text-neutral-400 hover:bg-neutral-800/60 hover:text-white"
+            }`}
           >
             <Icon icon="mdi:cart-outline" className="h-5 w-5" />
             Plan de compras
